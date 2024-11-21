@@ -8,7 +8,10 @@ jobs:
     strategy:
       matrix:
         go-version: ["1.23.3"]
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os:
+          - ubuntu-latest
+          - macos-latest
+          # - windows-latest # Windows seems to have some issues with the Zig installation
     runs-on: ${{ matrix.os }}
     env:
       # Our script only installs the dependencies automatically if it's running inside Docker.
@@ -37,6 +40,12 @@ jobs:
     container:
       image: golang:1.23.3
     steps:
+      # Install Git for checking out the repository, otherwise the checkout action will
+      # download the repository by REST API. This will cause go build to fail because it
+      # will do some git operations.
+      - run: |
+          apt-get update -yq
+          apt-get install -yq git
       - uses: actions/checkout@v4
       - name: Build
         run: |
@@ -45,6 +54,6 @@ jobs:
       - name: Test
         run: ./dist/linux-amd64/demo --database-url=sqlite://./test.sqlite3
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           path: dist
