@@ -32,16 +32,33 @@ jobs:
         run: |
           go mod vendor
           make all
+      # check if the binary is working
       - name: Test
-        run: ./dist/linux-amd64/demo --database-url=sqlite://./test.sqlite3
+        run: |
+          case ${{ matrix.os }} in
+            ubuntu-latest)
+              ./dist/linux-amd64/demo --database-url=sqlite://./test.sqlite3
+              ;;
+            macos-latest)
+              ./dist/darwin/demo --database-url=sqlite://./test.sqlite3
+              ;;
+            windows-latest)
+              ./dist/windows-amd64/demo --database-url=sqlite://./test.sqlite3
+              ;;
+          esac
 
   cross-build-in-docker:
     runs-on: ubuntu-latest
+    container:
+      image: golang:1.23.3
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Build
         run: |
-          docker run --rm -v $PWD:/build -w /build golang:1.23.3 make all
+          go mod vendor
+          make all
       - name: Test
         run: |
           ./dist/linux-amd64/demo --database-url=sqlite://./test.sqlite3
