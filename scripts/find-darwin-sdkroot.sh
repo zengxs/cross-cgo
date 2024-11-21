@@ -13,12 +13,6 @@
 
 UNAME=$(uname)
 
-if [ "${UNAME}" != "Linux" ] && [ "${UNAME}" != "Darwin" ]; then
-    # echo to stderr
-    echo "This script is only for Linux and macOS." >&2
-    exit 1
-fi
-
 # The directory where the macOS SDK will be installed, default
 # is "${HOME}/.macosx-sdk/MacOSX.sdk" if not specified.
 SDKROOT_INSTALL_DIR="${SDKROOT_INSTALL_DIR:-${HOME}/.macosx-sdk/MacOSX.sdk}"

@@ -5,7 +5,11 @@ on:
 
 jobs:
   cross-build:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go-version: ["1.23.3"]
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
     env:
       # Our script only installs the dependencies automatically if it's running inside Docker.
       # GitHub Actions is not running inside Docker, so we need to set this environment variable
@@ -16,7 +20,24 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: "1.23.3"
+          go-version: ${{ matrix.go-version }}
+      - name: Set up Zig
+        uses: mlugg/setup-zig@v1
+        with:
+          version: 0.14.0-dev.2265+8a00bd4ce
+      - name: Build
+        run: |
+          go mod vendor
+          make all
+      - name: Test
+        run: ./dist/linux-amd64/demo --database-url=sqlite://./test.sqlite3
+
+  cross-build-in-docker:
+    runs-on: ubuntu-latest
+    container:
+      image: golang:1.23.3
+    steps:
+      - uses: actions/checkout@v4
       - name: Build
         run: |
           go mod vendor
