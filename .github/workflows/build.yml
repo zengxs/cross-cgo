@@ -37,22 +37,14 @@ jobs:
 
   cross-build-in-docker:
     runs-on: ubuntu-latest
-    container:
-      image: golang:1.23.3
     steps:
-      # Install Git for checking out the repository, otherwise the checkout action will
-      # download the repository by REST API. This will cause go build to fail because it
-      # will do some git operations.
-      - run: |
-          apt-get update -yq
-          apt-get install -yq git
       - uses: actions/checkout@v4
       - name: Build
         run: |
-          go mod vendor
-          make all
+          docker run --rm -v $PWD:/build -w /build golang:1.23.3 make all
       - name: Test
-        run: ./dist/linux-amd64/demo --database-url=sqlite://./test.sqlite3
+        run: |
+          ./dist/linux-amd64/demo --database-url=sqlite://./test.sqlite3
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
         with:
