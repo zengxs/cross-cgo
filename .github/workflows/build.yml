@@ -51,10 +51,11 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: golang:1.23.3
+    env:
+      # Disable the build version control system to avoid issues with Containers on GitHub Actions
+      GOFLAGS: "-buildvcs=false"
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
       - name: Build
         run: |
           go mod vendor
