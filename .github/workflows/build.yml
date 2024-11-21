@@ -1,0 +1,29 @@
+name: Build
+on:
+  push:
+  pull_request:
+
+jobs:
+  cross-build:
+    runs-on: ubuntu-latest
+    env:
+      # Our script only installs the dependencies automatically if it's running inside Docker.
+      # GitHub Actions is not running inside Docker, so we need to set this environment variable
+      # to allow the automatic installation of the dependencies.
+      ALLOW_OUTSIDE_DOCKER: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.23.3"
+      - name: Build
+        run: |
+          go mod vendor
+          make all
+      - name: Test
+        run: ./dist/linux-amd64/demo --database-url=sqlite://./test.sqlite3
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          path: dist
