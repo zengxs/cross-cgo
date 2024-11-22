@@ -37,7 +37,8 @@ jobs:
         run: |
           case ${{ matrix.os }} in
             ubuntu-latest)
-              ./dist/linux-amd64/demo --database-url=sqlite://./test.sqlite3
+              ./dist/linuxgnu-amd64/demo --database-url=sqlite://./test.sqlite3
+              ./dist/linuxmusl-amd64/demo --database-url=sqlite://./test.sqlite3
               ;;
             macos-latest)
               ./dist/darwin/demo --database-url=sqlite://./test.sqlite3
@@ -62,7 +63,8 @@ jobs:
           make all
       - name: Test
         run: |
-          ./dist/linux-amd64/demo --database-url=sqlite://./test.sqlite3
+          ./dist/linuxgnu-amd64/demo --database-url=sqlite://./test.sqlite3
+          ./dist/linuxmusl-amd64/demo --database-url=sqlite://./test.sqlite3
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
         with:
