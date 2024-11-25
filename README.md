@@ -12,9 +12,9 @@ linker to build the Go program, and these tools are platform-specific.
 This example shows how to cross-compile a Go program that uses CGO. It uses
 official golang Docker image to build the program for different platforms:
 
-- Linux (amd64, arm64)
-- Windows (amd64, arm64)
-- macOS (amd64, arm64, universal2)
+- Linux (glibc/musl) - amd64, arm64
+- Windows - amd64, arm64, i386
+- macOS - amd64, arm64, universal2
 
 The cross-compilation has been tested on macOS and Linux. It should work on
 Windows as well, but I haven't tested it.
